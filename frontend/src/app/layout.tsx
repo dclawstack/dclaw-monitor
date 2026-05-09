@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "DClaw Monitor",
-  description: "AI-powered alerting & root cause",
-};
+  title: "DClaw App",
+  description: "DClaw vertical SaaS application",
+}
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>
     </html>
-  );
+  )
 }

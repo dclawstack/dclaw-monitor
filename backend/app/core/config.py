@@ -1,17 +1,25 @@
 from pydantic_settings import BaseSettings
+from functools import lru_cache
 
 
 class Settings(BaseSettings):
+    app_name: str = "DClaw App"
     app_env: str = "dev"
-    api_host: str = "0.0.0.0"
-    api_port: int = 8118
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/dclaw_monitor"
-    redis_url: str = "redis://localhost:6379/0"
-    ollama_base_url: str = "http://localhost:11434"
+    debug: bool = True
+
+    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/dclaw_app"
+
+    secret_key: str = "change-me-in-production"
+    access_token_expire_minutes: int = 60
 
     class Config:
         env_file = ".env"
-        env_file_encoding = "utf-8"
+        case_sensitive = False
 
 
-settings = Settings()
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()
+
+
+settings = get_settings()

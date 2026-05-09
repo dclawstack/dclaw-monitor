@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import init_db
 from app.api.routes import health
-from app.api.v1 import monitor
 
 
 @asynccontextmanager
@@ -14,26 +13,21 @@ async def lifespan(app: FastAPI):
     yield
 
 
-def create_app() -> FastAPI:
-    app = FastAPI(
-        title="DClaw Monitor",
-        description="AI-powered alerting & root cause",
-        version="0.1.0",
-        lifespan=lifespan,
-    )
+app = FastAPI(
+    title=settings.app_name,
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["http://localhost:3032", "http://localhost:3000"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    app.include_router(health.router)
-    app.include_router(monitor.router, prefix="/api/v1")
-
-    return app
-
-
-app = create_app()
+app.include_router(health.router, prefix="/health", tags=["health"])
+# TODO: Wire v1 routers here after creating them
+# from app.api.v1 import some_router
+# app.include_router(some_router.router, prefix="/api/v1/some", tags=["some"])
