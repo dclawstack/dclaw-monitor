@@ -31,3 +31,12 @@ export async function getHealth() {
 // TODO: Add app-specific API functions here
 
 export { ApiError };
+
+// ── Generic typed fetch ──
+// Pages reference `api<T>(path, opts)` directly. Alias of fetchJson.
+export const api = fetchJson;
+
+// ── Type stubs ──
+// Permissive Record stubs until each domain shape is locked in.
+// Tighten these to real interfaces as the app stabilizes.
+export type ServiceHealth = Record<string, unknown>;
