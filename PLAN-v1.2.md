@@ -1,5 +1,8 @@
 # DClaw Monitor — v1.2 Feature Roadmap
 
+> 📘 **REVISED PRD v2.3 available:** See `REVISED-PRD.md` for complete gap analysis, current state, and full feature roadmap.
+
+
 > Based on: Y Combinator vertical SaaS principles, trending GitHub repos (prometheus, grafana), AI product research (Datadog, New Relic, Honeycomb, Highlight.io)
 
 ## Pre-Flight Checklist
