@@ -1,7 +1,7 @@
 from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, text
 
 from app.models.metric import MetricSample
 from app.repositories.base_repo import BaseRepository
@@ -36,3 +36,56 @@ class MetricRepository(BaseRepository[MetricSample]):
             cq = cq.where(MetricSample.sampled_at >= since)
         count = await self.db.execute(cq)
         return items, count.scalar() or 0
+
+    async def aggregate_by_window(
+        self,
+        name: str,
+        service_id: UUID | None = None,
+        from_ts: datetime | None = None,
+        to_ts: datetime | None = None,
+        window_seconds: int = 300,
+    ) -> list[dict]:
+        """Aggregate metric samples into time buckets using epoch-based bucketing."""
+        # Build filter conditions
+        conditions = [f"name = :name"]
+        params: dict = {"name": name, "window": window_seconds}
+
+        if service_id is not None:
+            conditions.append("service_id = :service_id")
+            params["service_id"] = str(service_id)
+        if from_ts is not None:
+            conditions.append("sampled_at >= :from_ts")
+            params["from_ts"] = from_ts
+        if to_ts is not None:
+            conditions.append("sampled_at <= :to_ts")
+            params["to_ts"] = to_ts
+
+        where_clause = " AND ".join(conditions)
+
+        sql = text(f"""
+            SELECT
+                to_timestamp(
+                    floor(extract(epoch FROM sampled_at) / :window) * :window
+                ) AS bucket,
+                avg(value) AS avg,
+                min(value) AS min,
+                max(value) AS max,
+                count(*) AS count
+            FROM metric_samples
+            WHERE {where_clause}
+            GROUP BY bucket
+            ORDER BY bucket ASC
+        """)
+
+        result = await self.db.execute(sql, params)
+        rows = result.fetchall()
+        return [
+            {
+                "bucket": row.bucket,
+                "avg": float(row.avg),
+                "min": float(row.min),
+                "max": float(row.max),
+                "count": int(row.count),
+            }
+            for row in rows
+        ]
