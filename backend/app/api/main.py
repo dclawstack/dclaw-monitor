@@ -5,6 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import init_db
 from app.api.routes import health
+from app.api.v1 import services, checks, alert_rules, alerts, metrics, logs
+
+# Import all models so SQLAlchemy metadata and Alembic can discover them
+import app.models  # noqa: F401
 
 
 @asynccontextmanager
@@ -28,6 +32,9 @@ app.add_middleware(
 )
 
 app.include_router(health.router, prefix="/health", tags=["health"])
-# TODO: Wire v1 routers here after creating them
-# from app.api.v1 import some_router
-# app.include_router(some_router.router, prefix="/api/v1/some", tags=["some"])
+app.include_router(services.router, prefix="/api/v1/services", tags=["services"])
+app.include_router(checks.router, prefix="/api/v1/checks", tags=["checks"])
+app.include_router(alert_rules.router, prefix="/api/v1/alert-rules", tags=["alert-rules"])
+app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["alerts"])
+app.include_router(metrics.router, prefix="/api/v1/metrics", tags=["metrics"])
+app.include_router(logs.router, prefix="/api/v1/logs", tags=["logs"])

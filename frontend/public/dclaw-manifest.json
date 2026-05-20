@@ -1,0 +1,26 @@
+{
+  "app_id": "monitor",
+  "name": "DClaw Monitor",
+  "tagline": "AI-powered observability — metrics, logs, alerts in one place",
+  "category": "Observability",
+  "color": "#3B82F6",
+  "version": "1.0.0",
+  "backend_port": 8030,
+  "frontend_port": 3030,
+  "database": "dclaw_monitor",
+  "base_api_path": "/api/v1",
+  "health_endpoint": "/health/",
+  "status": "active",
+  "features": [
+    "service-registry",
+    "uptime-checks",
+    "alert-rules",
+    "alerts",
+    "metric-ingestion",
+    "log-ingestion"
+  ],
+  "maintainer": {
+    "name": "Rajendra Machani",
+    "email": "01.r.machani@gmail.com"
+  }
+}
