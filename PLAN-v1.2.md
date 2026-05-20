@@ -169,10 +169,20 @@
 - [x] Repositories implement all required methods
 - [x] All routers registered in `backend/app/api/main.py`
 - [x] All endpoints return correct HTTP status codes (200, 201, 404, 422)
-- [x] Pytest tests pass for all domain endpoints
+- [x] Pytest tests pass for all domain endpoints (66/66)
+- [x] Tests added for synthetic journeys (`test_synthetic.py`) and distributed tracing (`test_traces.py`)
 - [x] `grep -r "random()" backend/` returns zero results (no mock data)
+- [x] `grep -r "print(" backend/app/` returns zero results (logging used everywhere)
 - [x] Frontend reads from `NEXT_PUBLIC_API_URL` and renders real data
-- [x] `dclaw-manifest.json` present at `frontend/public/dclaw-manifest.json`
+- [x] `dclaw-manifest.json` updated with all 21 features at `frontend/public/dclaw-manifest.json`
 - [x] APScheduler running 4 background jobs (uptime, alert eval, alert correlation, synthetic)
+- [x] Alert evaluator fires webhook dispatch on new alerts
 - [x] AI services wired: LLM client → OpenRouter with Ollama fallback
 - [x] Prometheus `/metrics` endpoint returns exposition format
+- [x] CORS config valid (`allow_credentials` removed — incompatible with wildcard origins)
+- [x] `.env.example` variable names match pydantic `Settings` fields
+- [x] Backend Dockerfile: non-root `appuser` (already present)
+- [x] Frontend Dockerfile: non-root `appuser` added to runner stage
+- [x] `docker-compose.yml`: deprecated `version:` key removed
+- [x] GitHub workflows: `build-backend.yml`, `build-frontend.yml`, `deploy.yml` added
+- [x] Helm `ingress.yaml` template added

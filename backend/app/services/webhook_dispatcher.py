@@ -1,9 +1,13 @@
 """Webhook dispatcher: sends alert payloads to configured webhook endpoints."""
+import logging
+
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.alert import Alert
 from app.repositories.webhook_config_repo import WebhookConfigRepository
+
+logger = logging.getLogger(__name__)
 
 
 async def dispatch_alert(alert: Alert, db_session: AsyncSession) -> None:
@@ -27,27 +31,24 @@ async def dispatch_alert(alert: Alert, db_session: AsyncSession) -> None:
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         for webhook in webhooks:
-            success = False
-            for attempt in range(2):  # one retry
+            delivered = False
+            for attempt in range(2):
                 try:
                     resp = await client.post(webhook.url, json=payload)
                     resp.raise_for_status()
-                    success = True
-                    print(
-                        f"[webhook_dispatcher] Dispatched to {webhook.name} ({webhook.url}): "
-                        f"status={resp.status_code}"
+                    delivered = True
+                    logger.info(
+                        "Dispatched to %s (%s): status=%d",
+                        webhook.name, webhook.url, resp.status_code,
                     )
                     break
                 except Exception as exc:
                     if attempt == 0:
-                        print(
-                            f"[webhook_dispatcher] Attempt {attempt+1} failed for "
-                            f"{webhook.name}: {exc}. Retrying..."
+                        logger.warning(
+                            "Attempt %d failed for %s: %s — retrying",
+                            attempt + 1, webhook.name, exc,
                         )
                     else:
-                        print(
-                            f"[webhook_dispatcher] All attempts failed for "
-                            f"{webhook.name}: {exc}"
-                        )
-            if not success:
-                print(f"[webhook_dispatcher] Failed to deliver to {webhook.name}")
+                        logger.error("All attempts failed for %s: %s", webhook.name, exc)
+            if not delivered:
+                logger.error("Failed to deliver to %s", webhook.name)
