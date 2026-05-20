@@ -40,7 +40,7 @@ async def create_incident(body: IncidentCreate, db: AsyncSession = Depends(get_d
     )
     repo = IncidentRepository(db)
     incident = await repo.create(incident)
-    asyncio.create_task(rca_engine.analyze_incident(incident.id, db))
+    asyncio.create_task(rca_engine.analyze_incident(incident.id))
     return incident
 
 

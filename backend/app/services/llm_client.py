@@ -33,7 +33,7 @@ async def stream_complete(prompt: str, system: str = "") -> AsyncGenerator[str, 
         yield chunk
 
 
-async def _build_messages(prompt: str, system: str) -> list[dict]:
+def _build_messages(prompt: str, system: str) -> list[dict]:
     msgs = []
     if system:
         msgs.append({"role": "system", "content": system})
@@ -42,7 +42,7 @@ async def _build_messages(prompt: str, system: str) -> list[dict]:
 
 
 async def _openrouter_complete(prompt: str, system: str) -> str:
-    messages = await _build_messages(prompt, system)
+    messages = _build_messages(prompt, system)
     async with httpx.AsyncClient(timeout=60.0) as client:
         resp = await client.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -58,7 +58,7 @@ async def _openrouter_complete(prompt: str, system: str) -> str:
 
 
 async def _openrouter_stream(prompt: str, system: str) -> AsyncGenerator[str, None]:
-    messages = await _build_messages(prompt, system)
+    messages = _build_messages(prompt, system)
     async with httpx.AsyncClient(timeout=120.0) as client:
         async with client.stream(
             "POST",
@@ -88,7 +88,7 @@ async def _openrouter_stream(prompt: str, system: str) -> AsyncGenerator[str, No
 
 
 async def _ollama_complete(prompt: str, system: str) -> str:
-    messages = await _build_messages(prompt, system)
+    messages = _build_messages(prompt, system)
     async with httpx.AsyncClient(timeout=120.0) as client:
         resp = await client.post(
             f"{settings.ollama_base_url}/api/chat",
@@ -100,7 +100,7 @@ async def _ollama_complete(prompt: str, system: str) -> str:
 
 
 async def _ollama_stream(prompt: str, system: str) -> AsyncGenerator[str, None]:
-    messages = await _build_messages(prompt, system)
+    messages = _build_messages(prompt, system)
     async with httpx.AsyncClient(timeout=120.0) as client:
         async with client.stream(
             "POST",

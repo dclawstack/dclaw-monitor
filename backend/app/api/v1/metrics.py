@@ -41,7 +41,7 @@ async def ingest_metric(body: MetricIngest, db: AsyncSession = Depends(get_db)):
     sample = await repo.create(sample)
 
     # Non-blocking anomaly detection
-    asyncio.create_task(check_anomaly(body.service_id, body.name, body.value, db))
+    asyncio.create_task(check_anomaly(body.service_id, body.name, body.value))
 
     return sample
 
