@@ -25,8 +25,8 @@ status: Future
 | **Tagline** | AI-powered alerting |
 | **Color** | #3B82F6 |
 | **Phase** | Future |
-| **Port (Frontend Dev)** | 3060 (TBD — assign before build) |
-| **Port (Backend Dev)** | 18130 (TBD — assign before build) |
+| **Port (Frontend Dev)** | 3030 |
+| **Port (Backend Dev)** | 8030 |
 | **Maturity Tier** | 🟡 Tier 2 — Partial |
 
 ---
