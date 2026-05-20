@@ -6,6 +6,8 @@ from app.models.log import LogEntry
 from app.models.incident import Incident
 from app.models.webhook_config import WebhookConfig
 from app.models.slo import SLO
+from app.models.synthetic_journey import SyntheticJourney
+from app.models.trace_span import TraceSpan
 
 __all__ = [
     "MonitoredService",
@@ -17,4 +19,6 @@ __all__ = [
     "Incident",
     "WebhookConfig",
     "SLO",
+    "SyntheticJourney",
+    "TraceSpan",
 ]

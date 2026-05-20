@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     llm_provider: str = "openrouter"
     openrouter_api_key: str = ""
     ollama_base_url: str = "http://localhost:11434"
+    llm_model: str = "moonshotai/kimi-k2"
+    ollama_model: str = "llama3.2"
 
     class Config:
         env_file = ".env"

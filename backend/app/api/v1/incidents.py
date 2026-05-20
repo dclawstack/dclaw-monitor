@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,20 +7,24 @@ from app.core.database import get_db
 from app.models.incident import Incident
 from app.repositories.incident_repo import IncidentRepository
 from app.schemas.incident import IncidentCreate, IncidentUpdate, IncidentRead, IncidentList
+from app.services import rca_engine
 
 router = APIRouter(tags=["incidents"])
 
 
 @router.get("/", response_model=IncidentList)
 async def list_incidents(
-    limit: int = 20,
+    filter_status: str | None = None,
+    service_id: uuid.UUID | None = None,
+    limit: int = 50,
     offset: int = 0,
-    status: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     repo = IncidentRepository(db)
-    if status is not None:
-        items, total = await repo.list_by_status(status, limit=limit, offset=offset)
+    if service_id is not None:
+        items, total = await repo.list_by_service(service_id, limit=limit, offset=offset)
+    elif filter_status is not None:
+        items, total = await repo.list_by_status(filter_status, limit=limit, offset=offset)
     else:
         items, total = await repo.list_all(limit=limit, offset=offset)
     return IncidentList(items=items, total=total)
@@ -27,12 +32,16 @@ async def list_incidents(
 
 @router.post("/", response_model=IncidentRead, status_code=status.HTTP_201_CREATED)
 async def create_incident(body: IncidentCreate, db: AsyncSession = Depends(get_db)):
-    repo = IncidentRepository(db)
     incident = Incident(
         title=body.title,
         severity=body.severity,
+        service_id=body.service_id,
+        alert_ids=body.alert_ids,
     )
-    return await repo.create(incident)
+    repo = IncidentRepository(db)
+    incident = await repo.create(incident)
+    asyncio.create_task(rca_engine.analyze_incident(incident.id, db))
+    return incident
 
 
 @router.get("/{incident_id}", response_model=IncidentRead)

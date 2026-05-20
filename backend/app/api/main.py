@@ -8,6 +8,7 @@ from app.api.routes import health
 from app.api.routes import prometheus
 from app.api.v1 import services, checks, alert_rules, alerts, metrics, logs
 from app.api.v1 import incidents, webhooks, slos
+from app.api.v1 import ai, synthetic, traces
 from app.services.scheduler import start_scheduler, stop_scheduler
 
 # Import all models so SQLAlchemy metadata and Alembic can discover them
@@ -47,3 +48,6 @@ app.include_router(logs.router, prefix="/api/v1/logs", tags=["logs"])
 app.include_router(incidents.router, prefix="/api/v1/incidents", tags=["incidents"])
 app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["webhooks"])
 app.include_router(slos.router, prefix="/api/v1/slos", tags=["slos"])
+app.include_router(ai.router, prefix="/api/v1/ai", tags=["ai"])
+app.include_router(synthetic.router, prefix="/api/v1/synthetic", tags=["synthetic"])
+app.include_router(traces.router, prefix="/api/v1/traces", tags=["traces"])

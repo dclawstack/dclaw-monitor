@@ -6,6 +6,8 @@ from pydantic import BaseModel, ConfigDict
 class IncidentCreate(BaseModel):
     title: str
     severity: str = "warning"
+    service_id: uuid.UUID | None = None
+    alert_ids: list | None = None
 
 
 class IncidentUpdate(BaseModel):
@@ -22,6 +24,7 @@ class IncidentRead(BaseModel):
     title: str
     severity: str
     status: str
+    service_id: uuid.UUID | None
     opened_at: datetime
     resolved_at: datetime | None
     mttr_seconds: int | None
