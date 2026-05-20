@@ -28,8 +28,13 @@ async def record_check(body: CheckCreate, db: AsyncSession = Depends(get_db)):
     repo = CheckRepository(db)
     saved = await repo.create(check)
 
-    # update service status based on check result
-    new_status = "healthy" if body.status == "up" else "down"
+    # up → healthy, hard failures → down, transient failures → degraded
+    if body.status == "up":
+        new_status = "healthy"
+    elif body.status in ("down", "error"):
+        new_status = "down"
+    else:  # timeout
+        new_status = "degraded"
     await svc_repo.update_status(body.service_id, new_status)
 
     return saved

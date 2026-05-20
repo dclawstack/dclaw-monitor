@@ -28,17 +28,19 @@ class AlertRepository(BaseRepository[Alert]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, Alert)
 
-    async def list_open(self, limit: int = 50, offset: int = 0) -> tuple[list[Alert], int]:
+    async def list_by_status(
+        self, status: str, limit: int = 50, offset: int = 0
+    ) -> tuple[list[Alert], int]:
         result = await self.db.execute(
             select(Alert)
-            .where(Alert.status == "open")
+            .where(Alert.status == status)
             .order_by(Alert.fired_at.desc())
             .limit(limit)
             .offset(offset)
         )
         items = list(result.scalars().all())
         count = await self.db.execute(
-            select(func.count()).select_from(Alert).where(Alert.status == "open")
+            select(func.count()).select_from(Alert).where(Alert.status == status)
         )
         return items, count.scalar() or 0
 

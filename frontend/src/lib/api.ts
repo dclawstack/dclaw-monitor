@@ -124,7 +124,7 @@ export interface LogEntry {
   level: string;
   message: string;
   source: string | null;
-  metadata_: Record<string, unknown> | null;
+  attributes: Record<string, unknown> | null;
   logged_at: string;
 }
 

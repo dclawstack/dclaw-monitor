@@ -17,6 +17,5 @@ class LogEntry(Base):
     level: Mapped[str] = mapped_column(String(20), default="info", nullable=False, index=True)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     source: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    # arbitrary structured metadata
-    metadata_: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
+    attributes: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     logged_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False, index=True)

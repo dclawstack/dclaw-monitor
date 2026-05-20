@@ -21,8 +21,8 @@ async def list_alerts(
     repo = AlertRepository(db)
     if service_id is not None:
         items, total = await repo.list_by_service(service_id, limit=limit, offset=offset)
-    elif filter_status == "open":
-        items, total = await repo.list_open(limit=limit, offset=offset)
+    elif filter_status is not None:
+        items, total = await repo.list_by_status(filter_status, limit=limit, offset=offset)
     else:
         items, total = await repo.list_all(limit=limit, offset=offset)
     return AlertList(items=items, total=total)

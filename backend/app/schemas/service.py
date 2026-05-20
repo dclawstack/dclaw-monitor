@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 from typing import Literal
-from pydantic import BaseModel, ConfigDict, HttpUrl, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 ServiceStatus = Literal["healthy", "degraded", "down", "unknown"]
 

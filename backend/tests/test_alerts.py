@@ -67,3 +67,28 @@ async def test_update_status_not_found(client):
         json={"status": "resolved"},
     )
     assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_filter_by_resolved_and_acknowledged_status(client):
+    r1 = await client.post("/api/v1/alerts/", json=ALERT_PAYLOAD)
+    r2 = await client.post("/api/v1/alerts/", json={**ALERT_PAYLOAD, "title": "Second alert"})
+    r3 = await client.post("/api/v1/alerts/", json={**ALERT_PAYLOAD, "title": "Third alert"})
+
+    await client.patch(f"/api/v1/alerts/{r1.json()['id']}/status", json={"status": "resolved"})
+    await client.patch(f"/api/v1/alerts/{r2.json()['id']}/status", json={"status": "acknowledged"})
+    # r3 stays open
+
+    resolved = await client.get("/api/v1/alerts/?status=resolved")
+    assert resolved.status_code == 200
+    assert resolved.json()["total"] == 1
+    assert resolved.json()["items"][0]["status"] == "resolved"
+
+    acknowledged = await client.get("/api/v1/alerts/?status=acknowledged")
+    assert acknowledged.status_code == 200
+    assert acknowledged.json()["total"] == 1
+    assert acknowledged.json()["items"][0]["status"] == "acknowledged"
+
+    open_alerts = await client.get("/api/v1/alerts/?status=open")
+    assert open_alerts.status_code == 200
+    assert open_alerts.json()["total"] == 1

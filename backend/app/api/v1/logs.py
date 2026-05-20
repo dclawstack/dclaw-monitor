@@ -17,7 +17,7 @@ async def ingest_log(body: LogIngest, db: AsyncSession = Depends(get_db)):
         level=body.level,
         message=body.message,
         source=body.source,
-        metadata_=body.metadata_,
+        attributes=body.attributes,
     )
     repo = LogRepository(db)
     return await repo.create(entry)

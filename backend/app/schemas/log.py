@@ -11,7 +11,7 @@ class LogIngest(BaseModel):
     level: LogLevel = "info"
     message: str
     source: str | None = None
-    metadata_: dict | None = None
+    attributes: dict | None = None
 
 
 class LogRead(BaseModel):
@@ -22,7 +22,7 @@ class LogRead(BaseModel):
     level: str
     message: str
     source: str | None
-    metadata_: dict | None
+    attributes: dict | None
     logged_at: datetime
 
 

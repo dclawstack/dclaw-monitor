@@ -104,7 +104,7 @@ def upgrade() -> None:
         sa.Column("level", sa.String(20), nullable=False, server_default="info"),
         sa.Column("message", sa.Text(), nullable=False),
         sa.Column("source", sa.String(500), nullable=True),
-        sa.Column("metadata", sa.JSON(), nullable=True),
+        sa.Column("attributes", sa.JSON(), nullable=True),
         sa.Column("logged_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(["service_id"], ["monitored_services.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
