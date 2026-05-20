@@ -190,5 +190,77 @@ export const getLogs = (params?: { q?: string; level?: string; service_id?: stri
   return fetchJson<LogList>(`/api/v1/logs/${q.toString() ? `?${q}` : ""}`);
 };
 
+// AI Chat
+export const chatWithAI = (message: string, service_id?: string) =>
+  fetchJson<{ reply: string }>("/api/v1/ai/chat", {
+    method: "POST",
+    body: JSON.stringify({ message, service_id }),
+  });
+
+// ── Incident types ──
+
+export type IncidentSeverity = "low" | "medium" | "high" | "critical";
+export type IncidentStatus = "open" | "resolved";
+
+export interface Incident {
+  id: string;
+  title: string;
+  severity: IncidentSeverity;
+  status: IncidentStatus;
+  opened_at: string;
+  resolved_at: string | null;
+  mttr_seconds: number | null;
+  rca_summary: string | null;
+  alert_ids: string[];
+}
+
+export interface IncidentList {
+  items: Incident[];
+  total: number;
+}
+
+export const getIncidents = (params?: { status?: string; limit?: number }) => {
+  const q = new URLSearchParams();
+  if (params?.status) q.set("status", params.status);
+  if (params?.limit) q.set("limit", String(params.limit));
+  return fetchJson<IncidentList>(`/api/v1/incidents/${q.toString() ? `?${q}` : ""}`);
+};
+
+export const getIncident = (id: string) =>
+  fetchJson<Incident>(`/api/v1/incidents/${id}`);
+
+export const createIncident = (data: { title: string; severity: string }) =>
+  fetchJson<Incident>("/api/v1/incidents/", { method: "POST", body: JSON.stringify(data) });
+
+export const resolveIncident = (id: string) =>
+  fetchJson<Incident>(`/api/v1/incidents/${id}/resolve`, { method: "POST" });
+
+// SLOs
+export interface SLO {
+  id: string;
+  service_id: string | null;
+  name: string;
+  target_percent: number;
+  window_days: number;
+  metric_name: string;
+  created_at: string;
+}
+export interface SLOStatus {
+  target_percent: number;
+  current_percent: number;
+  error_budget_remaining: number;
+  burn_rate: number;
+}
+
+export const getSLOs = (limit?: number) => {
+  const q = new URLSearchParams();
+  if (limit) q.set("limit", String(limit));
+  return fetchJson<{ items: SLO[]; total: number }>(`/api/v1/slos/${q.toString() ? `?${q}` : ""}`);
+};
+
+export const getSLOStatus = (id: string) =>
+  fetchJson<SLOStatus>(`/api/v1/slos/${id}/status`);
+
+
 // Legacy alias
 export type ServiceHealth = Service;

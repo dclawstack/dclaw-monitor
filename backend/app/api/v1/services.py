@@ -6,6 +6,7 @@ from app.core.database import get_db
 from app.models.service import MonitoredService
 from app.repositories.service_repo import ServiceRepository
 from app.schemas.service import ServiceCreate, ServiceUpdate, ServiceRead, ServiceList
+from app.services import runbook_generator
 
 router = APIRouter(tags=["services"])
 
@@ -33,6 +34,16 @@ async def create_service(body: ServiceCreate, db: AsyncSession = Depends(get_db)
         interval_seconds=body.interval_seconds,
     )
     return await repo.create(service)
+
+
+@router.get("/{service_id}/runbook")
+async def get_runbook(service_id: uuid.UUID, db: AsyncSession = Depends(get_db)) -> dict:
+    repo = ServiceRepository(db)
+    service = await repo.get_by_id(service_id)
+    if service is None:
+        raise HTTPException(status_code=404, detail="Service not found")
+    runbook = await runbook_generator.generate_runbook(service_id, db)
+    return {"service_id": str(service_id), "runbook": runbook}
 
 
 @router.get("/{service_id}", response_model=ServiceRead)

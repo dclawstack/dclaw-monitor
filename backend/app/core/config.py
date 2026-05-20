@@ -1,8 +1,10 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
+
     app_name: str = "DClaw Monitor"
     app_env: str = "dev"
     debug: bool = True
@@ -12,9 +14,12 @@ class Settings(BaseSettings):
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 60
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+    check_interval_seconds: int = 60
+    llm_provider: str = "openrouter"
+    openrouter_api_key: str = ""
+    ollama_base_url: str = "http://localhost:11434"
+    llm_model: str = "moonshotai/kimi-k2"
+    ollama_model: str = "llama3.2"
 
 
 @lru_cache()

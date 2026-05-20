@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Activity, AlertTriangle, CheckCircle, Server, XCircle, Clock, Plus } from "lucide-react";
+import Link from "next/link";
 import {
   getServices,
   getAlerts,
@@ -18,6 +19,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import MonitorCopilot from "@/components/monitor-copilot";
 
 const STATUS_COLOR: Record<string, string> = {
   healthy: "bg-green-100 text-green-800",
@@ -101,9 +103,23 @@ export default function DashboardPage() {
             <Activity className="w-7 h-7 text-blue-600" />
             <h1 className="text-xl font-bold text-gray-900">DClaw Monitor</h1>
           </div>
-          <Button onClick={() => setAddOpen(true)} className="gap-2">
-            <Plus className="w-4 h-4" /> Add Service
-          </Button>
+          <nav className="flex items-center gap-4 text-sm font-medium text-gray-600">
+            <Link href="/dashboard" className="text-blue-600 font-semibold">
+              Dashboard
+            </Link>
+            <Link href="/alerts" className="hover:text-gray-900 transition-colors">
+              Alerts
+            </Link>
+            <Link href="/incidents" className="hover:text-gray-900 transition-colors">
+              Incidents
+            </Link>
+            <Link href="/copilot" className="hover:text-gray-900 transition-colors">
+              AI Copilot
+            </Link>
+            <Button onClick={() => setAddOpen(true)} className="gap-2">
+              <Plus className="w-4 h-4" /> Add Service
+            </Button>
+          </nav>
         </div>
       </header>
 
@@ -182,7 +198,9 @@ export default function DashboardPage() {
                 <TableBody>
                   {services.map((svc) => (
                     <TableRow key={svc.id}>
-                      <TableCell className="font-medium">{svc.name}</TableCell>
+                      <TableCell className="font-medium">
+                        <a href={`/services/${svc.id}`} className="text-blue-600 hover:underline">{svc.name}</a>
+                      </TableCell>
                       <TableCell className="text-gray-500 text-sm truncate max-w-xs">{svc.url}</TableCell>
                       <TableCell>
                         <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLOR[svc.status]}`}>
@@ -252,6 +270,9 @@ export default function DashboardPage() {
           </Card>
         )}
       </div>
+
+      {/* AI Copilot floating widget */}
+      <MonitorCopilot />
 
       {/* Add Service dialog */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
