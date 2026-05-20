@@ -1,95 +1,110 @@
-# DClaw Scaffold
+# DClaw Monitor
 
-> **The single source of truth for new DClaw app development.**
-> Clone this repo, rename it, fill in your `PRODUCT-SPEC.md`, and hand it to your coding agents.
+> System and service observability dashboard built on the DClaw Stack.
 
 ## What This Is
 
-This scaffold contains the **complete boilerplate** for any DClaw vertical SaaS app:
-- ✅ FastAPI backend with correct SQLAlchemy 2.0 setup
-- ✅ Next.js 14 frontend with Tailwind + pre-built UI components
-- ✅ Docker + docker-compose with working healthchecks
-- ✅ Helm chart for Kubernetes deployment
-- ✅ Alembic migrations setup
-- ✅ pytest test harness with pinned pytest-asyncio==0.24.0
-- ✅ GitHub Actions CI
-- ✅ `AGENTS.md` + `PLAN-v1.2.md` templates
-- ✅ Pre-built UI components (no shadcn CLI needed)
+**DClaw Monitor** is a vertical SaaS application that provides real-time monitoring, alerting, and observability for systems and services running on the DClaw platform.
 
-## How to Use
+- **Backend:** FastAPI (Python 3.11) — port `8030`
+- **Frontend:** Next.js 14 (App Router) — port `3030`
+- **Database:** PostgreSQL 16 — `dclaw_monitor`
+- **Base API Path:** `/api/v1`
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend API | FastAPI + Python 3.11 |
+| ORM | SQLAlchemy 2.0 (async) |
+| Migrations | Alembic |
+| Validation | Pydantic v2 |
+| Frontend | Next.js 14 App Router |
+| Styling | Tailwind CSS v3 |
+| Containerisation | Docker + docker-compose |
+| Orchestration | Helm / Kubernetes |
+| CI | GitHub Actions |
+
+## Quick Start
 
 ```bash
-# 1. Clone the scaffold
-git clone https://github.com/dclawstack/dclaw-scaffold.git dclaw-YOURAPP
-cd dclaw-YOURAPP
+# Copy environment variables
+cp .env.example .env
 
-# 2. Find/replace placeholders
-# {APP_NAME}    -> Your app name (e.g., CRM)
-# {BACKEND_PORT}-> Next free port (see port registry below)
-# {FRONTEND_PORT}-> Next free port
-# {DB_NAME}     -> dclaw_yourapp
+# Start all services
+docker compose up -d
 
-# 3. Write your PRODUCT-SPEC.md
-# See PRODUCT-SPEC.md.template for the format
-
-# 4. Hand to your coding agents
-# See SCALING-PLAYBOOK.md for the parallel agent workflow
+# Backend: http://localhost:8030
+# Frontend: http://localhost:3030
+# API docs: http://localhost:8030/docs
 ```
 
-## Critical Rules for Agents
+## Development
 
-### DO NOT install shadcn CLI
-The scaffold includes pre-built UI components in `frontend/src/components/ui/`. Installing `shadcn` v4 or `@base-ui/react` will break the Tailwind v3 build.
+### Backend
 
-### DO NOT change the Postgres test port
-`backend/tests/conftest.py` uses `localhost:5432`. GitHub Actions CI maps the Postgres service to port 5432. Changing this breaks CI.
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app.api.main:app --reload --port 8030
+```
 
-### DO NOT delete `.github/workflows/ci.yml`
-This file is required for GitHub Actions to run tests on every push.
+### Frontend
 
-### DO NOT upgrade pytest-asyncio
-Keep `pytest-asyncio==0.24.0` pinned in `requirements.txt`. v1.3.0 breaks fixture scoping.
+```bash
+cd frontend
+npm install
+npm run dev   # starts on port 3030
+```
 
-## Port Registry
+### Database migrations
 
-| App | Backend Port | Frontend Port | Database |
-|-----|-------------|---------------|----------|
-| dclaw-chat | 8090 | 3000 | dclaw_chat |
-| dclaw-med | 8092 | 3004 | dclaw_med |
-| dclaw-learn | 8093 | 3003 | dclaw_learn |
-| dclaw-code | 8094 | 3005 | dclaw_code |
-| dclaw-legal | 8099 | 3013 | dclaw_legal |
-| dclaw-crm | 8095 | 3006 | dclaw_crm |
-| dclaw-finance | 8096 | 3007 | dclaw_finance |
-| dclaw-hr | 8097 | 3008 | dclaw_hr |
-| **TBD #9** | **8098** | **3009** | **dclaw_xxx** |
-| **TBD #10** | **8100** | **3010** | **dclaw_xxx** |
+```bash
+cd backend
+alembic revision --autogenerate -m "describe change"
+alembic upgrade head
+```
 
-> **Rule:** New apps take the next available port. Update this table when assigning.
+### Tests
 
-## Files You Must Customize
+```bash
+cd backend
+pytest
+```
 
-| File | What to Change |
-|------|---------------|
-| `backend/app/core/config.py` | `app_name`, default database name |
-| `backend/app/api/main.py` | Wire v1 routers |
-| `frontend/package.json` | Package name |
-| `frontend/src/app/layout.tsx` | Title, description |
-| `frontend/src/app/page.tsx` | Dashboard content |
-| `docker-compose.yml` | Port mappings |
-| `helm/Chart.yaml` | Chart name |
-| `helm/values.yaml` | Image repository names |
-| `AGENTS.md` | App identity, port numbers |
-| `PLAN-v1.2.md` | Feature backlog |
-| `PRODUCT-SPEC.md` | (Create this) Domain models, business logic |
+## Project Structure
 
-## What You Should NOT Change
+```
+dclaw-monitor/
+├── backend/
+│   ├── app/
+│   │   ├── api/          # FastAPI routers
+│   │   ├── core/         # config, database, utils
+│   │   ├── models/       # SQLAlchemy models
+│   │   ├── repositories/ # CRUD layer
+│   │   ├── schemas/      # Pydantic v2 schemas
+│   │   └── services/     # Business logic
+│   ├── alembic/          # DB migrations
+│   └── tests/
+├── frontend/
+│   └── src/
+│       ├── app/          # Next.js App Router pages
+│       ├── components/ui/ # Pre-built UI components
+│       └── lib/          # api.ts, utils.ts
+├── helm/                 # Kubernetes Helm chart
+├── docker-compose.yml
+├── .env.example
+├── AGENTS.md             # Agent development guide (read first)
+├── PLAN-v1.2.md          # Feature backlog
+└── REVISED-PRD.md        # Product requirements
+```
 
-- `app/models/base.py` — `DeclarativeBase` pattern
-- `app/core/database.py` — Engine/session factory
-- `docker-compose.yml` healthcheck commands
-- `frontend/Dockerfile` `ARG NEXT_PUBLIC_API_URL` pattern
-- `tests/conftest.py` — Test DB override pattern (keep `localhost:5432`)
-- `frontend/src/components/ui/*.tsx` — Pre-built components (use as-is)
-- `requirements.txt` — Keep `pytest-asyncio==0.24.0` pinned
-- `.github/workflows/ci.yml` — Do not delete
+## Agent Development
+
+Read `AGENTS.md` before making any code changes. It is the source of truth for architecture rules, anti-patterns, and the feature workflow.
+
+## Contributors
+
+| Name | Email | Role |
+|------|-------|------|
+| Rajendra Machani | 01.r.machani@gmail.com | Project Lead |
