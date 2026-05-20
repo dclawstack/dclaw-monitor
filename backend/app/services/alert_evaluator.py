@@ -1,4 +1,6 @@
 """Background task: evaluate alert rules against recent metric samples."""
+import asyncio
+import logging
 from datetime import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
@@ -7,6 +9,9 @@ from app.core.utils import utc_now
 from app.models.alert import Alert
 from app.repositories.alert_repo import AlertRuleRepository, AlertRepository
 from app.repositories.metric_repo import MetricRepository
+from app.services import webhook_dispatcher
+
+logger = logging.getLogger(__name__)
 
 
 _engine = create_async_engine(settings.database_url, pool_pre_ping=True)
@@ -88,3 +93,5 @@ async def run_alert_evaluation() -> None:
                 status="open",
             )
             await alert_repo.create(alert)
+            logger.info("Fired alert for rule %s (service=%s)", rule.name, rule.service_id)
+            asyncio.create_task(webhook_dispatcher.dispatch_alert(alert, db))
