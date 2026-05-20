@@ -25,12 +25,12 @@ services:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/dclaw_monitor
       APP_ENV: production
     ports:
-      - "8118:8118"
+      - "8030:8030"
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8118/health/')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8030/health/')"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -40,15 +40,15 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:8118
+        NEXT_PUBLIC_API_URL: http://localhost:8030
     environment:
-      PORT: 3032
+      PORT: 3030
     ports:
-      - "3032:3032"
+      - "3030:3030"
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3032/"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3030/"]
       interval: 30s
       timeout: 5s
       retries: 3

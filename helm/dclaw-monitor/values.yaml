@@ -7,7 +7,7 @@ image:
 
 service:
   type: ClusterIP
-  port: 8118
+  port: 8030
 
 ingress:
   enabled: true
