@@ -14,7 +14,7 @@ router = APIRouter(tags=["incidents"])
 
 @router.get("/", response_model=IncidentList)
 async def list_incidents(
-    filter_status: str | None = None,
+    status: str | None = None,
     service_id: uuid.UUID | None = None,
     limit: int = 50,
     offset: int = 0,
@@ -23,8 +23,8 @@ async def list_incidents(
     repo = IncidentRepository(db)
     if service_id is not None:
         items, total = await repo.list_by_service(service_id, limit=limit, offset=offset)
-    elif filter_status is not None:
-        items, total = await repo.list_by_status(filter_status, limit=limit, offset=offset)
+    elif status is not None:
+        items, total = await repo.list_by_status(status, limit=limit, offset=offset)
     else:
         items, total = await repo.list_all(limit=limit, offset=offset)
     return IncidentList(items=items, total=total)
