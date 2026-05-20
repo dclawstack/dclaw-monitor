@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 60
 
+    check_interval_seconds: int = 60
+    llm_provider: str = "openrouter"
+    openrouter_api_key: str = ""
+    ollama_base_url: str = "http://localhost:11434"
+
     class Config:
         env_file = ".env"
         case_sensitive = False
