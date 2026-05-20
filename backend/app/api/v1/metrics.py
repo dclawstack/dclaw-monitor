@@ -29,7 +29,7 @@ def _parse_window(window: str) -> int:
     return int(window)
 
 
-@router.post("/", response_model=MetricRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=MetricRead, status_code=status.HTTP_201_CREATED)
 async def ingest_metric(body: MetricIngest, db: AsyncSession = Depends(get_db)):
     sample = MetricSample(
         service_id=body.service_id,
@@ -120,7 +120,7 @@ async def forecast_metric(
     }
 
 
-@router.get("/", response_model=MetricList)
+@router.get("", response_model=MetricList)
 async def query_metrics(
     name: str = Query(..., description="Metric name to query"),
     service_id: uuid.UUID | None = None,

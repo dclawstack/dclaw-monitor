@@ -11,7 +11,7 @@ from app.schemas.check import CheckCreate, CheckRead, CheckList
 router = APIRouter(tags=["checks"])
 
 
-@router.post("/", response_model=CheckRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=CheckRead, status_code=status.HTTP_201_CREATED)
 async def record_check(body: CheckCreate, db: AsyncSession = Depends(get_db)):
     svc_repo = ServiceRepository(db)
     service = await svc_repo.get_by_id(body.service_id)

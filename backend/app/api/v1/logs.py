@@ -10,7 +10,7 @@ from app.schemas.log import LogIngest, LogRead, LogList
 router = APIRouter(tags=["logs"])
 
 
-@router.post("/", response_model=LogRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=LogRead, status_code=status.HTTP_201_CREATED)
 async def ingest_log(body: LogIngest, db: AsyncSession = Depends(get_db)):
     entry = LogEntry(
         service_id=body.service_id,
@@ -23,7 +23,7 @@ async def ingest_log(body: LogIngest, db: AsyncSession = Depends(get_db)):
     return await repo.create(entry)
 
 
-@router.get("/", response_model=LogList)
+@router.get("", response_model=LogList)
 async def query_logs(
     q: str | None = Query(default=None, description="Full-text search in message"),
     level: str | None = None,

@@ -262,5 +262,12 @@ export const getSLOStatus = (id: string) =>
   fetchJson<SLOStatus>(`/api/v1/slos/${id}/status`);
 
 
+// Seed / Clear
+export const seedData = () =>
+  fetchJson<{ seeded: Record<string, number> }>("/api/v1/seed", { method: "POST" });
+
+export const clearData = () =>
+  fetchJson<{ cleared: boolean }>("/api/v1/seed", { method: "DELETE" });
+
 // Legacy alias
 export type ServiceHealth = Service;

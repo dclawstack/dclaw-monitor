@@ -12,7 +12,7 @@ from app.services import rca_engine
 router = APIRouter(tags=["incidents"])
 
 
-@router.get("/", response_model=IncidentList)
+@router.get("", response_model=IncidentList)
 async def list_incidents(
     status: str | None = None,
     service_id: uuid.UUID | None = None,
@@ -30,7 +30,7 @@ async def list_incidents(
     return IncidentList(items=items, total=total)
 
 
-@router.post("/", response_model=IncidentRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=IncidentRead, status_code=status.HTTP_201_CREATED)
 async def create_incident(body: IncidentCreate, db: AsyncSession = Depends(get_db)):
     incident = Incident(
         title=body.title,

@@ -45,7 +45,7 @@ class JourneyList(BaseModel):
     total: int
 
 
-@router.get("/", response_model=JourneyList)
+@router.get("", response_model=JourneyList)
 async def list_journeys(
     limit: int = 20,
     offset: int = 0,
@@ -56,7 +56,7 @@ async def list_journeys(
     return JourneyList(items=items, total=total)
 
 
-@router.post("/", response_model=JourneyRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=JourneyRead, status_code=status.HTTP_201_CREATED)
 async def create_journey(body: JourneyCreate, db: AsyncSession = Depends(get_db)):
     journey = SyntheticJourney(
         name=body.name,

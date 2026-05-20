@@ -10,7 +10,7 @@ from app.schemas.webhook import WebhookCreate, WebhookRead, WebhookList
 router = APIRouter(tags=["webhooks"])
 
 
-@router.get("/", response_model=WebhookList)
+@router.get("", response_model=WebhookList)
 async def list_webhooks(
     limit: int = 20,
     offset: int = 0,
@@ -21,7 +21,7 @@ async def list_webhooks(
     return WebhookList(items=items, total=total)
 
 
-@router.post("/", response_model=WebhookRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=WebhookRead, status_code=status.HTTP_201_CREATED)
 async def create_webhook(body: WebhookCreate, db: AsyncSession = Depends(get_db)):
     repo = WebhookConfigRepository(db)
     webhook = WebhookConfig(

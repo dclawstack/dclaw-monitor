@@ -10,7 +10,7 @@ from app.schemas.alert import AlertRuleCreate, AlertRuleUpdate, AlertRuleRead, A
 router = APIRouter(tags=["alert-rules"])
 
 
-@router.get("/", response_model=AlertRuleList)
+@router.get("", response_model=AlertRuleList)
 async def list_alert_rules(
     limit: int = 20,
     offset: int = 0,
@@ -21,7 +21,7 @@ async def list_alert_rules(
     return AlertRuleList(items=items, total=total)
 
 
-@router.post("/", response_model=AlertRuleRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=AlertRuleRead, status_code=status.HTTP_201_CREATED)
 async def create_alert_rule(body: AlertRuleCreate, db: AsyncSession = Depends(get_db)):
     rule = AlertRule(
         name=body.name,

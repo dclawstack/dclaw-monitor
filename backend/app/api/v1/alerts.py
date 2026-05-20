@@ -10,7 +10,7 @@ from app.schemas.alert import AlertCreate, AlertStatusUpdate, AlertRead, AlertLi
 router = APIRouter(tags=["alerts"])
 
 
-@router.get("/", response_model=AlertList)
+@router.get("", response_model=AlertList)
 async def list_alerts(
     filter_status: str | None = Query(default=None, alias="status"),
     service_id: uuid.UUID | None = None,
@@ -28,7 +28,7 @@ async def list_alerts(
     return AlertList(items=items, total=total)
 
 
-@router.post("/", response_model=AlertRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=AlertRead, status_code=status.HTTP_201_CREATED)
 async def create_alert(body: AlertCreate, db: AsyncSession = Depends(get_db)):
     alert = Alert(
         rule_id=body.rule_id,

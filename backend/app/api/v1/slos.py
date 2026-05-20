@@ -10,7 +10,7 @@ from app.schemas.slo import SLOCreate, SLORead, SLOStatus, SLOList
 router = APIRouter(tags=["slos"])
 
 
-@router.get("/", response_model=SLOList)
+@router.get("", response_model=SLOList)
 async def list_slos(
     limit: int = 20,
     offset: int = 0,
@@ -21,7 +21,7 @@ async def list_slos(
     return SLOList(items=items, total=total)
 
 
-@router.post("/", response_model=SLORead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=SLORead, status_code=status.HTTP_201_CREATED)
 async def create_slo(body: SLOCreate, db: AsyncSession = Depends(get_db)):
     repo = SLORepository(db)
     slo = SLO(

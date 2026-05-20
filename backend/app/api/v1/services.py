@@ -11,7 +11,7 @@ from app.services import runbook_generator
 router = APIRouter(tags=["services"])
 
 
-@router.get("/", response_model=ServiceList)
+@router.get("", response_model=ServiceList)
 async def list_services(
     limit: int = 20,
     offset: int = 0,
@@ -22,7 +22,7 @@ async def list_services(
     return ServiceList(items=items, total=total)
 
 
-@router.post("/", response_model=ServiceRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ServiceRead, status_code=status.HTTP_201_CREATED)
 async def create_service(body: ServiceCreate, db: AsyncSession = Depends(get_db)):
     repo = ServiceRepository(db)
     if await repo.get_by_name(body.name):
