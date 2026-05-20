@@ -101,9 +101,13 @@ export default function DashboardPage() {
             <Activity className="w-7 h-7 text-blue-600" />
             <h1 className="text-xl font-bold text-gray-900">DClaw Monitor</h1>
           </div>
-          <Button onClick={() => setAddOpen(true)} className="gap-2">
-            <Plus className="w-4 h-4" /> Add Service
-          </Button>
+          <nav className="flex items-center gap-4">
+            <a href="/dashboard" className="text-sm font-medium text-blue-600 hover:underline">Dashboard</a>
+            <a href="/alerts" className="text-sm font-medium text-gray-600 hover:text-gray-900 hover:underline">Alerts</a>
+            <Button onClick={() => setAddOpen(true)} className="gap-2">
+              <Plus className="w-4 h-4" /> Add Service
+            </Button>
+          </nav>
         </div>
       </header>
 
@@ -182,7 +186,9 @@ export default function DashboardPage() {
                 <TableBody>
                   {services.map((svc) => (
                     <TableRow key={svc.id}>
-                      <TableCell className="font-medium">{svc.name}</TableCell>
+                      <TableCell className="font-medium">
+                        <a href={`/services/${svc.id}`} className="text-blue-600 hover:underline">{svc.name}</a>
+                      </TableCell>
                       <TableCell className="text-gray-500 text-sm truncate max-w-xs">{svc.url}</TableCell>
                       <TableCell>
                         <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLOR[svc.status]}`}>
