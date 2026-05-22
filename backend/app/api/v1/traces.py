@@ -90,7 +90,7 @@ async def list_recent_traces(
     return [RecentTrace(**r) for r in rows]
 
 
-@router.get("/", response_model=list[SpanRead])
+@router.get("", response_model=list[SpanRead])
 async def list_spans(
     trace_id: str = Query(..., description="Trace ID to fetch spans for"),
     db: AsyncSession = Depends(get_db),

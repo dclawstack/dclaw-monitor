@@ -40,7 +40,7 @@ async def test_list_spans_by_trace_id(client):
         _span("trace-003", "s1", "root"),
         _span("trace-003", "s2", "child", parent="s1"),
     ])
-    resp = await client.get("/api/v1/traces/?trace_id=trace-003")
+    resp = await client.get("/api/v1/traces?trace_id=trace-003")
     assert resp.status_code == 200
     spans = resp.json()
     assert len(spans) == 2
@@ -49,7 +49,7 @@ async def test_list_spans_by_trace_id(client):
 
 @pytest.mark.asyncio
 async def test_list_spans_empty_trace(client):
-    resp = await client.get("/api/v1/traces/?trace_id=nonexistent-trace")
+    resp = await client.get("/api/v1/traces?trace_id=nonexistent-trace")
     assert resp.status_code == 200
     assert resp.json() == []
 
@@ -67,7 +67,7 @@ async def test_duration_auto_computed(client):
     resp = await client.post("/api/v1/traces/ingest", json=[span])
     assert resp.status_code == 200
 
-    spans = await client.get("/api/v1/traces/?trace_id=trace-004")
+    spans = await client.get("/api/v1/traces?trace_id=trace-004")
     assert spans.json()[0]["duration_ms"] == pytest.approx(1000.0, abs=1.0)
 
 

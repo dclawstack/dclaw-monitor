@@ -17,7 +17,7 @@ WEBHOOK_WITH_SECRET = {
 
 @pytest.mark.asyncio
 async def test_create_webhook(client):
-    resp = await client.post("/api/v1/webhooks/", json=WEBHOOK_PAYLOAD)
+    resp = await client.post("/api/v1/webhooks", json=WEBHOOK_PAYLOAD)
     assert resp.status_code == 201
     data = resp.json()
     assert data["name"] == WEBHOOK_PAYLOAD["name"]
@@ -28,9 +28,9 @@ async def test_create_webhook(client):
 
 @pytest.mark.asyncio
 async def test_list_webhooks(client):
-    await client.post("/api/v1/webhooks/", json=WEBHOOK_PAYLOAD)
-    await client.post("/api/v1/webhooks/", json=WEBHOOK_WITH_SECRET)
-    resp = await client.get("/api/v1/webhooks/")
+    await client.post("/api/v1/webhooks", json=WEBHOOK_PAYLOAD)
+    await client.post("/api/v1/webhooks", json=WEBHOOK_WITH_SECRET)
+    resp = await client.get("/api/v1/webhooks")
     assert resp.status_code == 200
     data = resp.json()
     assert data["total"] == 2
@@ -38,7 +38,7 @@ async def test_list_webhooks(client):
 
 @pytest.mark.asyncio
 async def test_secret_masked_in_response(client):
-    resp = await client.post("/api/v1/webhooks/", json=WEBHOOK_WITH_SECRET)
+    resp = await client.post("/api/v1/webhooks", json=WEBHOOK_WITH_SECRET)
     assert resp.status_code == 201
     data = resp.json()
     assert data["secret"] == "***"
@@ -52,7 +52,7 @@ async def test_secret_masked_in_response(client):
 
 @pytest.mark.asyncio
 async def test_delete_webhook(client):
-    create = await client.post("/api/v1/webhooks/", json=WEBHOOK_PAYLOAD)
+    create = await client.post("/api/v1/webhooks", json=WEBHOOK_PAYLOAD)
     wid = create.json()["id"]
 
     resp = await client.delete(f"/api/v1/webhooks/{wid}")

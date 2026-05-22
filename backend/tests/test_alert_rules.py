@@ -12,7 +12,7 @@ RULE_PAYLOAD = {
 
 @pytest.mark.asyncio
 async def test_create_alert_rule(client):
-    resp = await client.post("/api/v1/alert-rules/", json=RULE_PAYLOAD)
+    resp = await client.post("/api/v1/alert-rules", json=RULE_PAYLOAD)
     assert resp.status_code == 201
     data = resp.json()
     assert data["name"] == "High Latency"
@@ -23,16 +23,16 @@ async def test_create_alert_rule(client):
 
 @pytest.mark.asyncio
 async def test_list_alert_rules(client):
-    await client.post("/api/v1/alert-rules/", json=RULE_PAYLOAD)
-    await client.post("/api/v1/alert-rules/", json={**RULE_PAYLOAD, "name": "Error Rate"})
-    resp = await client.get("/api/v1/alert-rules/")
+    await client.post("/api/v1/alert-rules", json=RULE_PAYLOAD)
+    await client.post("/api/v1/alert-rules", json={**RULE_PAYLOAD, "name": "Error Rate"})
+    resp = await client.get("/api/v1/alert-rules")
     assert resp.status_code == 200
     assert resp.json()["total"] == 2
 
 
 @pytest.mark.asyncio
 async def test_get_alert_rule(client):
-    create = await client.post("/api/v1/alert-rules/", json=RULE_PAYLOAD)
+    create = await client.post("/api/v1/alert-rules", json=RULE_PAYLOAD)
     rid = create.json()["id"]
     resp = await client.get(f"/api/v1/alert-rules/{rid}")
     assert resp.status_code == 200
@@ -47,7 +47,7 @@ async def test_get_alert_rule_not_found(client):
 
 @pytest.mark.asyncio
 async def test_update_alert_rule(client):
-    create = await client.post("/api/v1/alert-rules/", json=RULE_PAYLOAD)
+    create = await client.post("/api/v1/alert-rules", json=RULE_PAYLOAD)
     rid = create.json()["id"]
     resp = await client.patch(f"/api/v1/alert-rules/{rid}", json={"threshold": 1000.0, "is_active": False})
     assert resp.status_code == 200
@@ -57,7 +57,7 @@ async def test_update_alert_rule(client):
 
 @pytest.mark.asyncio
 async def test_delete_alert_rule(client):
-    create = await client.post("/api/v1/alert-rules/", json=RULE_PAYLOAD)
+    create = await client.post("/api/v1/alert-rules", json=RULE_PAYLOAD)
     rid = create.json()["id"]
     resp = await client.delete(f"/api/v1/alert-rules/{rid}")
     assert resp.status_code == 204

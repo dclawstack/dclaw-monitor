@@ -11,7 +11,7 @@ JOURNEY_PAYLOAD = {
 
 @pytest.mark.asyncio
 async def test_create_journey(client):
-    resp = await client.post("/api/v1/synthetic/", json=JOURNEY_PAYLOAD)
+    resp = await client.post("/api/v1/synthetic", json=JOURNEY_PAYLOAD)
     assert resp.status_code == 201
     data = resp.json()
     assert data["name"] == JOURNEY_PAYLOAD["name"]
@@ -22,7 +22,7 @@ async def test_create_journey(client):
 
 @pytest.mark.asyncio
 async def test_list_journeys_empty(client):
-    resp = await client.get("/api/v1/synthetic/")
+    resp = await client.get("/api/v1/synthetic")
     assert resp.status_code == 200
     data = resp.json()
     assert data["total"] == 0
@@ -31,9 +31,9 @@ async def test_list_journeys_empty(client):
 
 @pytest.mark.asyncio
 async def test_list_journeys(client):
-    await client.post("/api/v1/synthetic/", json=JOURNEY_PAYLOAD)
-    await client.post("/api/v1/synthetic/", json={**JOURNEY_PAYLOAD, "name": "API ping"})
-    resp = await client.get("/api/v1/synthetic/")
+    await client.post("/api/v1/synthetic", json=JOURNEY_PAYLOAD)
+    await client.post("/api/v1/synthetic", json={**JOURNEY_PAYLOAD, "name": "API ping"})
+    resp = await client.get("/api/v1/synthetic")
     assert resp.status_code == 200
     data = resp.json()
     assert data["total"] == 2
@@ -41,7 +41,7 @@ async def test_list_journeys(client):
 
 @pytest.mark.asyncio
 async def test_get_journey(client):
-    create = await client.post("/api/v1/synthetic/", json=JOURNEY_PAYLOAD)
+    create = await client.post("/api/v1/synthetic", json=JOURNEY_PAYLOAD)
     jid = create.json()["id"]
     resp = await client.get(f"/api/v1/synthetic/{jid}")
     assert resp.status_code == 200
@@ -56,7 +56,7 @@ async def test_get_journey_not_found(client):
 
 @pytest.mark.asyncio
 async def test_update_journey(client):
-    create = await client.post("/api/v1/synthetic/", json=JOURNEY_PAYLOAD)
+    create = await client.post("/api/v1/synthetic", json=JOURNEY_PAYLOAD)
     jid = create.json()["id"]
     resp = await client.patch(f"/api/v1/synthetic/{jid}", json={"is_active": False})
     assert resp.status_code == 200
@@ -65,7 +65,7 @@ async def test_update_journey(client):
 
 @pytest.mark.asyncio
 async def test_delete_journey(client):
-    create = await client.post("/api/v1/synthetic/", json=JOURNEY_PAYLOAD)
+    create = await client.post("/api/v1/synthetic", json=JOURNEY_PAYLOAD)
     jid = create.json()["id"]
     del_resp = await client.delete(f"/api/v1/synthetic/{jid}")
     assert del_resp.status_code == 204

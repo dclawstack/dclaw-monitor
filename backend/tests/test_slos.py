@@ -13,7 +13,7 @@ SLO_PAYLOAD = {
 
 @pytest.mark.asyncio
 async def test_create_slo(client):
-    resp = await client.post("/api/v1/slos/", json=SLO_PAYLOAD)
+    resp = await client.post("/api/v1/slos", json=SLO_PAYLOAD)
     assert resp.status_code == 201
     data = resp.json()
     assert data["name"] == SLO_PAYLOAD["name"]
@@ -24,9 +24,9 @@ async def test_create_slo(client):
 
 @pytest.mark.asyncio
 async def test_list_slos(client):
-    await client.post("/api/v1/slos/", json=SLO_PAYLOAD)
-    await client.post("/api/v1/slos/", json={**SLO_PAYLOAD, "name": "Error Rate SLO"})
-    resp = await client.get("/api/v1/slos/")
+    await client.post("/api/v1/slos", json=SLO_PAYLOAD)
+    await client.post("/api/v1/slos", json={**SLO_PAYLOAD, "name": "Error Rate SLO"})
+    resp = await client.get("/api/v1/slos")
     assert resp.status_code == 200
     data = resp.json()
     assert data["total"] == 2
@@ -34,7 +34,7 @@ async def test_list_slos(client):
 
 @pytest.mark.asyncio
 async def test_get_slo_status(client):
-    create = await client.post("/api/v1/slos/", json=SLO_PAYLOAD)
+    create = await client.post("/api/v1/slos", json=SLO_PAYLOAD)
     sid = create.json()["id"]
 
     resp = await client.get(f"/api/v1/slos/{sid}/status")
@@ -51,7 +51,7 @@ async def test_get_slo_status(client):
 
 @pytest.mark.asyncio
 async def test_delete_slo(client):
-    create = await client.post("/api/v1/slos/", json=SLO_PAYLOAD)
+    create = await client.post("/api/v1/slos", json=SLO_PAYLOAD)
     sid = create.json()["id"]
 
     resp = await client.delete(f"/api/v1/slos/{sid}")

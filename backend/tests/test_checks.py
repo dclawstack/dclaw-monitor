@@ -2,14 +2,14 @@ import pytest
 
 
 async def _create_service(client, name: str = "test-svc") -> str:
-    resp = await client.post("/api/v1/services/", json={"name": name, "url": "http://test.local"})
+    resp = await client.post("/api/v1/services", json={"name": name, "url": "http://test.local"})
     return resp.json()["id"]
 
 
 @pytest.mark.asyncio
 async def test_record_check_up(client):
     sid = await _create_service(client)
-    resp = await client.post("/api/v1/checks/", json={
+    resp = await client.post("/api/v1/checks", json={
         "service_id": sid,
         "status": "up",
         "latency_ms": 42,
@@ -24,7 +24,7 @@ async def test_record_check_up(client):
 @pytest.mark.asyncio
 async def test_record_check_updates_service_status(client):
     sid = await _create_service(client, "monitored-svc")
-    await client.post("/api/v1/checks/", json={"service_id": sid, "status": "up", "latency_ms": 50})
+    await client.post("/api/v1/checks", json={"service_id": sid, "status": "up", "latency_ms": 50})
     svc = await client.get(f"/api/v1/services/{sid}")
     assert svc.json()["status"] == "healthy"
 
@@ -32,14 +32,14 @@ async def test_record_check_updates_service_status(client):
 @pytest.mark.asyncio
 async def test_record_check_down_updates_status(client):
     sid = await _create_service(client, "down-svc")
-    await client.post("/api/v1/checks/", json={"service_id": sid, "status": "down"})
+    await client.post("/api/v1/checks", json={"service_id": sid, "status": "down"})
     svc = await client.get(f"/api/v1/services/{sid}")
     assert svc.json()["status"] == "down"
 
 
 @pytest.mark.asyncio
 async def test_record_check_unknown_service(client):
-    resp = await client.post("/api/v1/checks/", json={
+    resp = await client.post("/api/v1/checks", json={
         "service_id": "00000000-0000-0000-0000-000000000001",
         "status": "up",
     })
@@ -50,7 +50,7 @@ async def test_record_check_unknown_service(client):
 async def test_list_checks_for_service(client):
     sid = await _create_service(client, "history-svc")
     for i in range(3):
-        await client.post("/api/v1/checks/", json={"service_id": sid, "status": "up", "latency_ms": i * 10})
+        await client.post("/api/v1/checks", json={"service_id": sid, "status": "up", "latency_ms": i * 10})
     resp = await client.get(f"/api/v1/checks/service/{sid}")
     assert resp.status_code == 200
     assert resp.json()["total"] == 3
