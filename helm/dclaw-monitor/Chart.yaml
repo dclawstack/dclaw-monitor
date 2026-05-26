@@ -1,6 +1,0 @@
-apiVersion: v2
-name: dclaw-monitor
-description: AI-powered alerting & root cause
-type: application
-version: 0.1.0
-appVersion: 0.1.0
